@@ -1,4 +1,4 @@
-id := "st.lynx.plugins.opendeck-akp153.sdPlugin"
+id := "st.lynx.plugins.opendeck-ampgd6.sdPlugin"
 
 release: bump package tag
 
@@ -25,13 +25,13 @@ tag next=`git cliff --bumped-version`:
     git tag "{{next}}"
 
 build-linux:
-    cargo build --release --target x86_64-unknown-linux-gnu --target-dir target/plugin-linux
+    docker run --rm -it -v $(pwd):/io -w /io ghcr.io/rust-cross/cargo-zigbuild:sha-eba2d7e cargo zigbuild --release --target x86_64-unknown-linux-gnu --target-dir target/plugin-linux
 
 build-mac:
     docker run --rm -it -v $(pwd):/io -w /io ghcr.io/rust-cross/cargo-zigbuild:sha-eba2d7e cargo zigbuild --release --target universal2-apple-darwin --target-dir target/plugin-mac
 
 build-win:
-    cargo build --release --target x86_64-pc-windows-gnu --target-dir target/plugin-win
+    docker run --rm -it -v $(pwd):/io -w /io ghcr.io/rust-cross/cargo-zigbuild:sha-eba2d7e sh -c "apt-get update -qq && apt-get install -y -qq mingw-w64 > /dev/null 2>&1 && cargo zigbuild --release --target x86_64-pc-windows-gnu --target-dir target/plugin-win"
 
 clean:
     sudo rm -rf target/
@@ -41,10 +41,10 @@ collect:
     mkdir -p build/{{id}}
     cp -r assets build/{{id}}
     cp manifest.json build/{{id}}
-    cp target/plugin-linux/x86_64-unknown-linux-gnu/release/opendeck-akp153 build/{{id}}/opendeck-akp153-linux
-    cp target/plugin-mac/universal2-apple-darwin/release/opendeck-akp153 build/{{id}}/opendeck-akp153-mac
-    cp target/plugin-win/x86_64-pc-windows-gnu/release/opendeck-akp153.exe build/{{id}}/opendeck-akp153-win.exe
+    cp target/plugin-linux/x86_64-unknown-linux-gnu/release/opendeck-akp153 build/{{id}}/opendeck-ampgd6-linux
+    cp target/plugin-mac/universal2-apple-darwin/release/opendeck-akp153 build/{{id}}/opendeck-ampgd6-mac
+    cp target/plugin-win/x86_64-pc-windows-gnu/release/opendeck-akp153.exe build/{{id}}/opendeck-ampgd6-win.exe
 
 [working-directory: "build"]
 zip:
-    zip -r opendeck-akp153.plugin.zip {{id}}/
+    zip -r opendeck-ampgd6.plugin.zip {{id}}/

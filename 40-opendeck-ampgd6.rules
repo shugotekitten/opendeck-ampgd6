@@ -1,0 +1,4 @@
+# udev rules for FIFINE Ampligame D6
+SUBSYSTEM=="usb", ATTRS{idVendor}=="3142", ATTRS{idProduct}=="0007", MODE="0660", TAG+="uaccess"
+
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3142", ATTRS{idProduct}=="0007", MODE="0660", TAG+="uaccess"

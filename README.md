@@ -1,8 +1,8 @@
 ![Plugin Icon](assets/icon.png)
 
-# OpenDeck Ajazz AKP153 / Mirabox HSV293S Plugin
+# OpenDeck FIFINE Ampligame D6 Plugin
 
-An unofficial plugin for Mirabox HSV293S-family devices
+An unofficial plugin for FIFINE Ampligame D6 device
 
 ## OpenDeck version
 
@@ -10,18 +10,7 @@ Requires OpenDeck 2.5.0 or newer
 
 ## Supported devices
 
-- Mirabox HSV293S (5548:6670)
-- Mirabox HSV293SV3 (6603:1014,6603:1005)
-- Ajazz AKP153 (5548:6674)
-- Ajazz AKP153E (0300:1010)
-- Ajazz AKP153E (rev. 2) (0300:3010)
-- Ajazz AKP153R (0300:1020)
-- Mars Gaming MSD-ONE (0b00:1000)
-- Maddog GK150K (0c00:1000)
-- Risemode Vision 01 (0a00:1001)
-- TMICE Stream Controller (0500:1001)
-- Soomfon Stream Controller XF-CN001 (1500:3003)
-- Soomfon Studio Control Deck (5548:6670) (would be displayed as Mirabox HSV293S)
+- FIFINE Ampligame D6 (3142:0007)
 
 ## Platform support
 
@@ -31,14 +20,15 @@ Requires OpenDeck 2.5.0 or newer
 
 ## Installation
 
-1. Download an archive from [releases](https://github.com/4ndv/opendeck-akp153/releases)
+1. Download an archive from [releases](https://github.com/shugotekitten/opendeck-ampgd6/releases)
 2. In OpenDeck: Plugins -> Install from file
-3. Linux: Download [udev rules](./40-opendeck-akp153.rules) and install them by copying into `/etc/udev/rules.d/` and running `sudo udevadm control --reload-rules`
+3. Linux: Download [udev rules](./40-opendeck-ampgd6.rules) and install them by copying into `/etc/udev/rules.d/` and running `sudo udevadm control --reload-rules`
 4. Unplug and plug again the device, restart OpenDeck
 
-## Known issues
+## Device specifications
 
-- All the "old" devices come with the same serial number. You cannot use two of the same devices at the same time (for example a pair of 153R-s), but you can use two different devices at the same time (for example a 153R and a 153E)
+- Layout: 3 rows × 5 columns (15 buttons)
+- Protocol version: 1
 
 ## Building
 

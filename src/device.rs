@@ -19,11 +19,36 @@ pub async fn device_task(candidate: CandidateDevice, token: CancellationToken) {
 
     // Wrap in a closure so we can use `?` operator
     let device = async || -> Result<Device, MirajazzError> {
+        log::info!("Connecting to device...");
         let device = connect(&candidate).await?;
+        log::info!("Device connected successfully");
 
-        device.set_brightness(50).await?;
-        device.clear_all_button_images().await?;
-        device.flush().await?;
+        // Try to set brightness - some devices may not support this command
+        log::info!("Setting brightness...");
+        if let Err(e) = device.set_brightness(50).await {
+            log::warn!("Failed to set brightness (this may be normal for this device): {}", e);
+            // Continue anyway - brightness setting might not be supported
+        } else {
+            log::info!("Brightness set successfully");
+        }
+
+        // Try to clear all button images - some devices may not support this command
+        log::info!("Clearing all button images...");
+        if let Err(e) = device.clear_all_button_images().await {
+            log::warn!("Failed to clear all button images (this may be normal for this device): {}", e);
+            // Continue anyway - clearing might not be supported or needed
+        } else {
+            log::info!("Button images cleared successfully");
+        }
+
+        // Try to flush - some devices may not need this
+        log::info!("Flushing device...");
+        if let Err(e) = device.flush().await {
+            log::warn!("Failed to flush device (this may be normal for this device): {}", e);
+            // Continue anyway
+        } else {
+            log::info!("Device flushed successfully");
+        }
 
         Ok(device)
     }()
@@ -135,6 +160,22 @@ async fn device_events_task(candidate: &CandidateDevice) -> Result<(), MirajazzE
 
     log::info!("Reader is ready for {}", candidate.id);
 
+    // Track last processed event to avoid duplicates
+    use std::collections::HashSet;
+    use std::time::{Duration, Instant};
+    
+    #[derive(Hash, PartialEq, Eq, Clone, Copy)]
+    enum EventKey {
+        ButtonDown(u8),
+        ButtonUp(u8),
+        EncoderDown(u8),
+        EncoderUp(u8),
+        EncoderTwist(u8, i16),
+    }
+    
+    let mut last_events: HashSet<(EventKey, Instant)> = HashSet::new();
+    let dedup_window = Duration::from_millis(500); // 500ms window for deduplication
+
     loop {
         log::info!("Reading updates...");
 
@@ -149,15 +190,45 @@ async fn device_events_task(candidate: &CandidateDevice) -> Result<(), MirajazzE
             }
         };
 
+        // Clean up old events from deduplication cache
+        let now = Instant::now();
+        last_events.retain(|(_, time)| now.duration_since(*time) < dedup_window);
+
         for update in updates {
             log::info!("New update: {:#?}", update);
+
+            // Create a key for deduplication
+            let event_key = match &update {
+                DeviceStateUpdate::ButtonDown(key) => EventKey::ButtonDown(*key),
+                DeviceStateUpdate::ButtonUp(key) => EventKey::ButtonUp(*key),
+                DeviceStateUpdate::EncoderDown(enc) => EventKey::EncoderDown(*enc),
+                DeviceStateUpdate::EncoderUp(enc) => EventKey::EncoderUp(*enc),
+                DeviceStateUpdate::EncoderTwist(enc, val) => EventKey::EncoderTwist(*enc, *val as i16),
+            };
+
+            // Check for duplicates (same event type and key/encoder within the dedup window)
+            let is_duplicate = last_events.iter().any(|(key, _)| *key == event_key);
+
+            if is_duplicate {
+                log::debug!("Skipping duplicate event: {:#?}", update);
+                continue;
+            }
+
+            // Add to deduplication cache
+            last_events.insert((event_key, now));
 
             let id = candidate.id.clone();
 
             if let Some(outbound) = OUTBOUND_EVENT_MANAGER.lock().await.as_mut() {
                 match update {
-                    DeviceStateUpdate::ButtonDown(key) => outbound.key_down(id, key).await.unwrap(),
-                    DeviceStateUpdate::ButtonUp(key) => outbound.key_up(id, key).await.unwrap(),
+                    DeviceStateUpdate::ButtonDown(key) => {
+                        log::info!("Sending key_down event: device_id={}, key={}", id, key);
+                        outbound.key_down(id.clone(), key).await.unwrap();
+                    }
+                    DeviceStateUpdate::ButtonUp(key) => {
+                        log::info!("Sending key_up event: device_id={}, key={}", id, key);
+                        outbound.key_up(id.clone(), key).await.unwrap();
+                    }
                     DeviceStateUpdate::EncoderDown(encoder) => {
                         outbound.encoder_down(id, encoder).await.unwrap();
                     }
