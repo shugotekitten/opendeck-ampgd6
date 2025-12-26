@@ -23,24 +23,18 @@ pub const AMPGD6_PID: u16 = 0x0007;
 // Map all queries to usage page 65440 and usage id 1 for now
 pub const AMPGD6_QUERY: DeviceQuery = DeviceQuery::new(65440, 1, FIFINE_VID, AMPGD6_PID);
 
-pub const QUERIES: [DeviceQuery; 1] = [
-    AMPGD6_QUERY,
-];
+pub const QUERIES: [DeviceQuery; 1] = [AMPGD6_QUERY];
 
 /// Returns correct image format for device kind and key
-pub fn get_image_format_for_key(kind: &Kind, _key: u8) -> ImageFormat {
-    // AMPGD6 doesn't need rotation or mirroring - images are displayed normally
-    let size = if kind.protocol_version() == 1 {
-        (85, 85)
-    } else {
-        (95, 95)
-    };
+pub fn get_image_format_for_key(_kind: &Kind, _key: u8) -> ImageFormat {
+    // AMPGD6 needs 180° rotation
+    let size = (100, 100);
 
     ImageFormat {
         mode: ImageMode::JPEG,
         size,
         rotation: ImageRotation::Rot180, // AMPGD6 needs 180° rotation
-        mirror: ImageMirroring::None,  // No mirroring needed for AMPGD6
+        mirror: ImageMirroring::None,    // No mirroring needed for AMPGD6
     }
 }
 
