@@ -1,7 +1,7 @@
 [package]
 name = "opendeck-ampgd6"
-version = "0.1.0"
-edition = "2024"
+version = "0.2.0"
+edition = "2026"
 
 [dependencies]
 data-url = "0.3.1"
