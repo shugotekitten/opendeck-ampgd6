@@ -3,9 +3,9 @@ use mirajazz::{
     types::{HidDeviceInfo, ImageFormat, ImageMirroring, ImageMode, ImageRotation},
 };
 
-// AMPGD6 in hex would be... but we'll use a unique namespace
-// Must be unique between all the plugins, 2 characters long and match `DeviceNamespace` field in `manifest.json`
-pub const DEVICE_NAMESPACE: &str = "99";
+// Device namespace: must be unique between all the plugins, 2 characters long and match `DeviceNamespace` field in `manifest.json`
+// Previously used "99" from the source project akp153, now changed to "d6" for this plugin
+pub const DEVICE_NAMESPACE: &str = "d6";
 
 pub const ROW_COUNT: usize = 3;
 pub const COL_COUNT: usize = 5;
