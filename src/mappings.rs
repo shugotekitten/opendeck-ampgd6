@@ -31,9 +31,9 @@ pub const QUERIES: [DeviceQuery; 1] = [
 pub fn get_image_format_for_key(kind: &Kind, _key: u8) -> ImageFormat {
     // AMPGD6 doesn't need rotation or mirroring - images are displayed normally
     let size = if kind.protocol_version() == 1 {
-        (85, 85)
+        (105, 105)
     } else {
-        (95, 95)
+        (105, 105)
     };
 
     ImageFormat {
