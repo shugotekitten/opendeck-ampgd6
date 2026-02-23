@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.1] - 2026-02-23
+
+### 🚀 Features
+
+- Add build to release
+
+### 🐛 Bug Fixes
+
+- correct cargo edition to 2024
+- remove ref of template plugin name
+
 ## [0.2.0] - 2026-01-23
 
 ### 🚀 Features
