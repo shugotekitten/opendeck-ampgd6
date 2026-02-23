@@ -41,9 +41,9 @@ collect:
     mkdir -p build/{{id}}
     cp -r assets build/{{id}}
     cp manifest.json build/{{id}}
-    cp target/plugin-linux/x86_64-unknown-linux-gnu/release/opendeck-akp153 build/{{id}}/opendeck-ampgd6-linux
-    cp target/plugin-mac/universal2-apple-darwin/release/opendeck-akp153 build/{{id}}/opendeck-ampgd6-mac
-    cp target/plugin-win/x86_64-pc-windows-gnu/release/opendeck-akp153.exe build/{{id}}/opendeck-ampgd6-win.exe
+    cp target/plugin-linux/x86_64-unknown-linux-gnu/release/opendeck-ampgd6 build/{{id}}/opendeck-ampgd6-linux
+    cp target/plugin-mac/universal2-apple-darwin/release/opendeck-ampgd6 build/{{id}}/opendeck-ampgd6-mac
+    cp target/plugin-win/x86_64-pc-windows-gnu/release/opendeck-ampgd6.exe build/{{id}}/opendeck-ampgd6-win.exe
 
 [working-directory: "build"]
 zip:
